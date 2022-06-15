@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  NotFoundException,
+  HttpException,
+} from '@nestjs/common';
 import { TodosService } from './todos.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
@@ -14,7 +24,15 @@ export class TodosController {
 
   @Get()
   findAll() {
-    return this.todosService.findAll();
+    try {
+      const response = this.todosService.findAll();
+      if (!response) {
+        throw new NotFoundException();
+      }
+      return response;
+    } catch (error) {
+      throw new HttpException('Internal Server Error', 500);
+    }
   }
 
   @Get(':id')
