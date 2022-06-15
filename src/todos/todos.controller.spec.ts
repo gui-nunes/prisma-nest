@@ -64,7 +64,7 @@ describe('TodosController', () => {
     it('should throw an error with code 404', async () => {
       jest
         .spyOn(TodosServiceMock, 'findAll')
-        .mockRejectedValue(new NotFoundException());
+        .mockRejectedValue('Internal Server Error');
 
       const result = await controller.findAll();
       console.log(result);
