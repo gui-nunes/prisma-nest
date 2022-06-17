@@ -10,18 +10,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model User {
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  name  String?
-  posts Todo[]
+  uid          String           @id @default(uuid())
+  name         String?
+  email        String           @unique
+  profileViews Int              @default(0)
+  role         Role             @default(USER)
+  posts        Post[]
+  city         String
+  country      String
+  profile      ExtendedProfile?
+  pets         Json
 }
 
-model Todo {
-  id        Int      @default(autoincrement()) @id
+model ExtendedProfile {
+  uid          String           @id @default(uuid())
+  userId String?    @unique
+  bio    String?
+  User   User?   @relation(fields: [userId], references: [uid])
+}
+
+model Post {
+  uid        String     @id @default(uuid())
   title     String
-  content   String?
-  done Boolean? @default(false)
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
+  published Boolean @default(true)
+  author    User    @relation(fields: [authorId], references: [uid])
+  authorId  String
+  comments  Json
+  views     Int     @default(0)
+  likes     Int     @default(0)
+}
+
+enum Role {
+  USER
+  ADMIN
 }

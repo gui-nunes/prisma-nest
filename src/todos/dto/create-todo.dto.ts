@@ -1,5 +1,7 @@
-import { Prisma } from '@prisma/client';
-
-export class CreateTodoDto implements Prisma.TodoCreateInput {
+export class CreateTodoDto {
+  id: number;
   title: string;
+  content: string;
+  authorId: number;
+  done: boolean;
 }

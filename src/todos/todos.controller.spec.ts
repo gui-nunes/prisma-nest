@@ -1,80 +1,157 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TodosController } from './todos.controller';
 import { TodosService } from './todos.service';
-import { Todo } from '@prisma/client';
+import { CreateTodoDto } from './dto/create-todo.dto';
 import { faker } from '@faker-js/faker';
-import { NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
-describe('TodosController', () => {
-  let controller: TodosController;
+describe('UNIT: TodosController', () => {
+  const mockTodo: CreateTodoDto = {
+    id: 1,
+    title: faker.lorem.sentence(),
+    content: faker.lorem.paragraphs(),
+    authorId: 1,
+    done: faker.datatype.boolean(),
+  };
 
-  const mockTodoList: Todo[] = [
+  const mockTodosArray: CreateTodoDto[] = [
     {
-      id: 0,
+      id: 1,
       title: faker.lorem.sentence(),
-      content: faker.lorem.paragraph(),
-      authorId: 0,
-      done: false,
+      content: faker.lorem.paragraphs(),
+      authorId: 1,
+      done: faker.datatype.boolean(),
     },
     {
       id: 1,
       title: faker.lorem.sentence(),
-      content: faker.lorem.paragraph(),
-      authorId: 0,
-      done: false,
+      content: faker.lorem.paragraphs(),
+      authorId: 1,
+      done: faker.datatype.boolean(),
     },
   ];
 
-  const TodosServiceMock = {
-    create: jest.fn().mockResolvedValue(mockTodoList[0]),
-    findAll: jest.fn().mockResolvedValue(mockTodoList),
-    findOne: jest.fn().mockResolvedValue(mockTodoList[0]),
-    update: jest.fn().mockResolvedValue(''),
-    remove: jest.fn().mockResolvedValue(''),
+  const mockUpdatedTodo: CreateTodoDto = {
+    ...mockTodo,
   };
 
+  const mockError = new HttpException('error', HttpStatus.BAD_REQUEST);
+
+  let controller: TodosController;
+  let service: TodosService;
+
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    let mockPrisma: any;
+    service = new TodosService(mockPrisma);
+    controller = new TodosController(service);
+
+    const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [TodosController],
       providers: [
-        TodosController,
         {
           provide: TodosService,
-          useValue: TodosServiceMock,
+          useValue: {
+            create: jest.fn(),
+            findAll: jest.fn(),
+            findOne: jest.fn(),
+            update: jest.fn(),
+            remove: jest.fn(),
+          },
         },
       ],
     }).compile();
 
-    controller = module.get<TodosController>(TodosController);
+    service = moduleRef.get<TodosService>(TodosService);
+    controller = moduleRef.get<TodosController>(TodosController);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('create', () => {
+    it('should return a todo', async () => {
+      jest.spyOn(service, 'create').mockResolvedValue(mockTodo);
+
+      expect(controller.create(mockTodo)).toBeDefined();
+      expect(await controller.create(mockTodo)).toBe(mockTodo);
+      expect(service.create).toBeCalledTimes(2);
+    });
+
+    it('should throw an error if an error occurs', async () => {
+      jest.spyOn(service, 'create').mockRejectedValue(mockError);
+
+      expect(controller.create(mockTodo)).rejects.toThrow('error');
+      expect(service.create).toBeCalledTimes(1);
+    });
   });
 
   describe('findAll', () => {
-    it('should return an array of todos', async () => {
-      jest.spyOn(TodosServiceMock, 'findAll').mockResolvedValue(mockTodoList);
+    it('should return a todo list', async () => {
+      jest.spyOn(service, 'findAll').mockResolvedValue(mockTodosArray);
 
-      const result = await controller.findAll();
-      expect(result).toEqual(mockTodoList);
-      expect(result.length).toBe(2);
-      expect(TodosServiceMock.findAll).toHaveBeenCalled();
+      expect(controller.findAll()).toBeDefined();
+      expect(await controller.findAll()).toBe(mockTodosArray);
+      expect(service.findAll).toBeCalledTimes(2);
     });
-    it('should throw an error with code 404', async () => {
-      jest
-        .spyOn(TodosServiceMock, 'findAll')
-        .mockRejectedValue('Internal Server Error');
 
-      const result = await controller.findAll();
-      console.log(result);
-      // expect(result).toThrowError(new NotFoundException());
+    it('should throw an error if an error occurs', async () => {
+      jest.spyOn(service, 'findAll').mockRejectedValue(mockError);
+
+      expect(controller.findAll()).rejects.toThrow('error');
+      expect(service.findAll).toBeCalledTimes(1);
     });
   });
-  // it('should throw an error with code 500', async () => {
-  //   const response = TodosServiceMock.findAll.mockRejectedValue(new Error());
-  //   await expect(controller.findAll()).rejects.toThrow(new Error());
-  //   expect(response).toHaveBeenCalled();
-  //   expect(response).rejects.toThrow(new Error());
-  // });
+
+  describe('findOne', () => {
+    it('should return a todo', async () => {
+      jest.spyOn(service, 'findOne').mockResolvedValue(mockTodo);
+
+      expect(controller.findOne(String(mockTodo.id))).toBeDefined();
+      expect(await controller.findOne(String(mockTodo.id))).toBe(mockTodo);
+      expect(service.findOne).toBeCalledTimes(2);
+    });
+
+    it('shuold throw an error if an error occurs', async () => {
+      jest.spyOn(service, 'findOne').mockRejectedValue(mockError);
+
+      expect(controller.findOne(String(mockTodo.id))).rejects.toThrow('error');
+      expect(service.findOne).toBeCalledTimes(1);
+    });
+  });
+  describe('update', () => {
+    it('should return a todo updated', async () => {
+      jest.spyOn(service, 'update').mockResolvedValue(mockUpdatedTodo);
+
+      expect(controller.update(String(mockTodo.id), mockTodo)).toBeDefined();
+      expect(await controller.update(String(mockTodo.id), mockTodo)).toBe(
+        mockUpdatedTodo,
+      );
+      expect(service.update).toBeCalledTimes(2);
+    });
+    it('should throw an error if an error occurs', async () => {
+      jest.spyOn(service, 'update').mockRejectedValue(mockError);
+
+      expect(controller.update(String(mockTodo.id), mockTodo)).rejects.toThrow(
+        'error',
+      );
+      expect(service.update).toBeCalledTimes(1);
+    });
+  });
+  describe('remove', () => {
+    it('should return a todo removed', async () => {
+      jest.spyOn(service, 'remove').mockResolvedValue(mockTodo);
+
+      expect(controller.remove(String(mockTodo.id))).toBeDefined();
+      expect(await controller.remove(String(mockTodo.id))).toBe(mockTodo);
+      expect(service.remove).toBeCalledTimes(2);
+    });
+
+    it('should throw an error if an error occurs', async () => {
+      jest.spyOn(service, 'remove').mockRejectedValue(mockError);
+
+      expect(controller.remove(String(mockTodo.id))).rejects.toThrow('error');
+      expect(service.remove).toBeCalledTimes(1);
+    });
+  });
 });
