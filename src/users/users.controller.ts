@@ -20,6 +20,9 @@ export class UsersController {
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     try {
+      if (!createUserDto.password) {
+        throw new HttpException('Password is required', HttpStatus.BAD_REQUEST);
+      }
       return await this.usersService.create(createUserDto);
     } catch (error) {
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);

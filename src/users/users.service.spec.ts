@@ -15,6 +15,7 @@ describe('UsersService', () => {
     id: 1,
     name: faker.name.findName(),
     email: faker.internet.email(),
+    password: faker.internet.password(),
   };
 
   const mockUserArray: CreateUserDto[] = [
@@ -22,11 +23,13 @@ describe('UsersService', () => {
       id: 1,
       name: faker.name.findName(),
       email: faker.internet.email(),
+      password: faker.internet.password(),
     },
     {
       id: 1,
       name: faker.name.findName(),
       email: faker.internet.email(),
+      password: faker.internet.password(),
     },
   ];
 

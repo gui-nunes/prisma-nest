@@ -10,12 +10,16 @@ describe('UNIT: UsersController', () => {
   let controller: UsersController;
   let service: UsersService;
 
-  const mockError = new HttpException('error', HttpStatus.BAD_REQUEST);
+  const mockError = new HttpException(
+    'error',
+    HttpStatus.INTERNAL_SERVER_ERROR,
+  );
 
   const mockUser: CreateUserDto = {
     id: 1,
     name: faker.name.findName(),
     email: faker.internet.email(),
+    password: faker.internet.password(),
   };
 
   const mockUserArray: CreateUserDto[] = [
@@ -23,11 +27,13 @@ describe('UNIT: UsersController', () => {
       id: 1,
       name: faker.name.findName(),
       email: faker.internet.email(),
+      password: faker.internet.password(),
     },
     {
       id: 1,
       name: faker.name.findName(),
       email: faker.internet.email(),
+      password: faker.internet.password(),
     },
   ];
 
@@ -71,9 +77,20 @@ describe('UNIT: UsersController', () => {
     });
     it('should throw an error if an error occurs', async () => {
       jest.spyOn(service, 'create').mockRejectedValue(mockError);
-
       expect(controller.create(mockUser)).rejects.toThrow('error');
       expect(service.create).toBeCalledTimes(1);
+    });
+
+    it('should throw a error if password is not provided', async () => {
+      mockUser.password = null;
+      const mockError_BAD_REQUEST = new HttpException(
+        'Password is required',
+        HttpStatus.BAD_REQUEST,
+      );
+      jest.spyOn(service, 'create').mockRejectedValue(mockError_BAD_REQUEST);
+      expect(controller.create(mockUser)).rejects.toThrow(
+        mockError_BAD_REQUEST,
+      );
     });
   });
 
