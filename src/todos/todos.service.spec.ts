@@ -31,7 +31,6 @@ describe('UNIT TEST: TodosService', () => {
     },
   ];
 
-
   const mockError = new HttpException('error', HttpStatus.BAD_REQUEST);
   let service: TodosService;
   const prismaMock = {

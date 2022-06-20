@@ -1,6 +1,6 @@
-import { Prisma } from '@prisma/client';
-
-export class CreateUserDto implements Prisma.UserCreateInput {
+import { Todo } from '@prisma/client';
+export class CreateUserDto {
+  id: number;
   email: string;
-  name?: string;
+  name: string;
 }
