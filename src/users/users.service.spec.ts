@@ -1,10 +1,10 @@
-import { faker } from '@faker-js/faker';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
+import { faker } from '@faker-js/faker';
 
 describe('UsersService', () => {
   let service: UsersService;
