@@ -17,6 +17,14 @@ export class TodosService {
     return await this.prisma.todo.findMany();
   }
 
+  async findByUserId(userId: number): Promise<Todo[]> {
+    return await this.prisma.todo.findMany({
+      where: {
+        authorId: userId,
+      },
+    });
+  }
+
   async findOne(id: number): Promise<Todo> {
     return await this.prisma.todo.findUnique({
       where: {

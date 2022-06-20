@@ -92,54 +92,59 @@ describe('UNIT: UsersController', () => {
         mockError_BAD_REQUEST,
       );
     });
-  });
-
-  describe('findAll', () => {
-    it('should return a user list', async () => {
-      jest.spyOn(service, 'findAll').mockResolvedValue(mockUserArray);
-      expect(await controller.findAll()).toBe(mockUserArray);
+    it('should throw a error if email already existis', async () => {
+      jest.spyOn(service, 'create').mockRejectedValue(mockError);
     });
-    it('should throw an error if an error occurs', async () => {
-      jest.spyOn(service, 'findAll').mockRejectedValue(mockError);
 
-      expect(controller.findAll()).rejects.toThrow('error');
-      expect(service.findAll).toBeCalledTimes(1);
+    describe('findAll', () => {
+      it('should return a user list', async () => {
+        jest.spyOn(service, 'findAll').mockResolvedValue(mockUserArray);
+        expect(await controller.findAll()).toBe(mockUserArray);
+      });
+      it('should throw an error if an error occurs', async () => {
+        jest.spyOn(service, 'findAll').mockRejectedValue(mockError);
+
+        expect(controller.findAll()).rejects.toThrow('error');
+        expect(service.findAll).toBeCalledTimes(1);
+      });
     });
-  });
 
-  describe('findOne', () => {
-    it('should return a user', async () => {
-      jest.spyOn(service, 'findOne').mockResolvedValue(mockUser);
-      expect(await controller.findOne('1')).toBe(mockUser);
+    describe('findOne', () => {
+      it('should return a user', async () => {
+        jest.spyOn(service, 'findOne').mockResolvedValue(mockUser);
+        expect(await controller.findOne('1')).toBe(mockUser);
+      });
+      it('should throw an error if an error occurs', async () => {
+        jest.spyOn(service, 'findOne').mockRejectedValue(mockError);
+
+        expect(controller.findOne('1')).rejects.toThrow('error');
+      });
     });
-    it('should throw an error if an error occurs', async () => {
-      jest.spyOn(service, 'findOne').mockRejectedValue(mockError);
 
-      expect(controller.findOne('1')).rejects.toThrow('error');
+    describe('update', () => {
+      it('should return a updated user', async () => {
+        jest.spyOn(service, 'update').mockResolvedValue(mockUser);
+        expect(await controller.update('1', mockUser)).toBe(mockUser);
+      });
+      it('should throw an error if an error occurs', async () => {
+        jest.spyOn(service, 'update').mockRejectedValue(mockError);
+
+        expect(controller.update('1', mockUpdatedTodo)).rejects.toThrow(
+          'error',
+        );
+      });
     });
-  });
 
-  describe('update', () => {
-    it('should return a updated user', async () => {
-      jest.spyOn(service, 'update').mockResolvedValue(mockUser);
-      expect(await controller.update('1', mockUser)).toBe(mockUser);
-    });
-    it('should throw an error if an error occurs', async () => {
-      jest.spyOn(service, 'update').mockRejectedValue(mockError);
+    describe('delete', () => {
+      it('should return a user deleted', async () => {
+        jest.spyOn(service, 'remove').mockResolvedValue(mockUser);
+        expect(await controller.remove('1')).toBe(mockUser);
+      });
+      it('should throw an error if an error occurs', async () => {
+        jest.spyOn(service, 'remove').mockRejectedValue(mockError);
 
-      expect(controller.update('1', mockUpdatedTodo)).rejects.toThrow('error');
-    });
-  });
-
-  describe('delete', () => {
-    it('should return a user deleted', async () => {
-      jest.spyOn(service, 'remove').mockResolvedValue(mockUser);
-      expect(await controller.remove('1')).toBe(mockUser);
-    });
-    it('should throw an error if an error occurs', async () => {
-      jest.spyOn(service, 'remove').mockRejectedValue(mockError);
-
-      expect(controller.remove('1')).rejects.toThrow('error');
+        expect(controller.remove('1')).rejects.toThrow('error');
+      });
     });
   });
 });

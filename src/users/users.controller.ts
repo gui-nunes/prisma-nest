@@ -23,8 +23,13 @@ export class UsersController {
       if (!createUserDto.password) {
         throw new HttpException('Password is required', HttpStatus.BAD_REQUEST);
       }
-      return await this.usersService.create(createUserDto);
+      const response = await this.usersService.create(createUserDto);
+      console.log(response);
+      return response;
     } catch (error) {
+      if (error.code === 'P2002') {
+        throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
+      }
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
