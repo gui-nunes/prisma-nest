@@ -8,6 +8,7 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  Headers,
 } from '@nestjs/common';
 import { TodosService } from './todos.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
@@ -21,6 +22,15 @@ export class TodosController {
   async create(@Body() createTodoDto: CreateTodoDto) {
     try {
       return await this.todosService.create(createTodoDto);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Get()
+  async findByUserId(@Headers('userid') header: number) {
+    try {
+      return await this.todosService.findByUserId(+header);
     } catch (error) {
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -21,6 +21,7 @@ describe('UNIT: UsersController', () => {
     email: faker.internet.email(),
     password: faker.internet.password(),
     created_at: faker.date.past(),
+    updated_at: faker.date.past(),
   };
 
   const mockUserArray: CreateUserDto[] = [
@@ -30,13 +31,15 @@ describe('UNIT: UsersController', () => {
       email: faker.internet.email(),
       password: faker.internet.password(),
       created_at: faker.date.past(),
+      updated_at: faker.date.past(),
     },
     {
-      id: 1,
+      id: 2,
       name: faker.name.findName(),
       email: faker.internet.email(),
       password: faker.internet.password(),
       created_at: faker.date.past(),
+      updated_at: faker.date.past(),
     },
   ];
 
@@ -75,7 +78,7 @@ describe('UNIT: UsersController', () => {
   });
 
   describe('create', () => {
-    it('should return a user', async () => {
+    it('should create a user and return it', async () => {
       jest.spyOn(service, 'create').mockResolvedValue(mockUser);
       expect(await controller.create(mockUser)).toBe(mockUser);
     });

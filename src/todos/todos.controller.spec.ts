@@ -12,6 +12,8 @@ describe('UNIT: TodosController', () => {
     content: faker.lorem.paragraphs(),
     authorId: 1,
     done: faker.datatype.boolean(),
+    created_at: faker.date.past(),
+    updated_at: faker.date.past(),
   };
 
   const mockTodosArray: CreateTodoDto[] = [
@@ -21,6 +23,8 @@ describe('UNIT: TodosController', () => {
       content: faker.lorem.paragraphs(),
       authorId: 1,
       done: faker.datatype.boolean(),
+      created_at: faker.date.past(),
+      updated_at: faker.date.past(),
     },
     {
       id: 1,
@@ -28,6 +32,8 @@ describe('UNIT: TodosController', () => {
       content: faker.lorem.paragraphs(),
       authorId: 1,
       done: faker.datatype.boolean(),
+      created_at: faker.date.past(),
+      updated_at: faker.date.past(),
     },
   ];
 
@@ -53,6 +59,7 @@ describe('UNIT: TodosController', () => {
           useValue: {
             create: jest.fn(),
             findAll: jest.fn(),
+            findByUserId: jest.fn(),
             findOne: jest.fn(),
             update: jest.fn(),
             remove: jest.fn(),
@@ -83,6 +90,20 @@ describe('UNIT: TodosController', () => {
 
       expect(controller.create(mockTodo)).rejects.toThrow('error');
       expect(service.create).toBeCalledTimes(1);
+    });
+  });
+
+  describe('findByUserId', () => {
+    it('should return an array of todos', async () => {
+      jest.spyOn(service, 'findByUserId').mockResolvedValue(mockTodosArray);
+      expect(controller.findByUserId(1)).toBeDefined();
+      expect(await controller.findByUserId(1)).toBe(mockTodosArray);
+      expect(service.findByUserId).toBeCalledTimes(2);
+    });
+
+    it('should throw an error if an error occurs', async () => {
+      jest.spyOn(service, 'findByUserId').mockRejectedValue(mockError);
+      expect(controller.findByUserId(1)).rejects.toThrow('error');
     });
   });
 

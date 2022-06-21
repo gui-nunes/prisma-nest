@@ -17,6 +17,7 @@ describe('UsersService', () => {
     email: faker.internet.email(),
     password: faker.internet.password(),
     created_at: faker.date.past(),
+    updated_at: faker.date.past(),
   };
 
   const mockUserArray: CreateUserDto[] = [
@@ -26,6 +27,7 @@ describe('UsersService', () => {
       email: faker.internet.email(),
       password: faker.internet.password(),
       created_at: faker.date.past(),
+      updated_at: faker.date.past(),
     },
     {
       id: 1,
@@ -33,6 +35,7 @@ describe('UsersService', () => {
       email: faker.internet.email(),
       password: faker.internet.password(),
       created_at: faker.date.past(),
+      updated_at: faker.date.past(),
     },
   ];
 

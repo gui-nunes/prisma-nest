@@ -12,6 +12,8 @@ describe('UNIT TEST: TodosService', () => {
     content: faker.lorem.paragraphs(),
     authorId: 1,
     done: faker.datatype.boolean(),
+    created_at: faker.date.past(),
+    updated_at: faker.date.past(),
   };
 
   const mockTodosArray: CreateTodoDto[] = [
@@ -21,6 +23,8 @@ describe('UNIT TEST: TodosService', () => {
       content: faker.lorem.paragraphs(),
       authorId: 1,
       done: faker.datatype.boolean(),
+      created_at: faker.date.past(),
+      updated_at: faker.date.past(),
     },
     {
       id: 1,
@@ -28,6 +32,8 @@ describe('UNIT TEST: TodosService', () => {
       content: faker.lorem.paragraphs(),
       authorId: 1,
       done: faker.datatype.boolean(),
+      created_at: faker.date.past(),
+      updated_at: faker.date.past(),
     },
   ];
 
@@ -74,6 +80,21 @@ describe('UNIT TEST: TodosService', () => {
       jest.spyOn(prismaMock.todo, 'create').mockRejectedValue(mockError);
 
       expect(service.create(mockTodo)).rejects.toThrow(mockError);
+    });
+  });
+
+  describe('findByUserId', () => {
+    it('should find all todos by userId', async () => {
+      jest.spyOn(prismaMock.todo, 'findMany').mockResolvedValue(mockTodosArray);
+
+      expect(await service.findByUserId(1)).toBeDefined();
+      expect(await service.findByUserId(1)).toBe(mockTodosArray);
+    });
+
+    it('should throw an error', async () => {
+      jest.spyOn(prismaMock.todo, 'findMany').mockRejectedValue(mockError);
+
+      expect(service.findByUserId(1)).rejects.toThrow(mockError);
     });
   });
 

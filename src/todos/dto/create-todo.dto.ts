@@ -4,4 +4,6 @@ export class CreateTodoDto {
   content: string;
   authorId: number;
   done: boolean;
+  created_at: Date;
+  updated_at: Date;
 }
