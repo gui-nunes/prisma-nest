@@ -15,6 +15,8 @@ model User {
   email String  @unique
   name  String?
   password String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
   posts Todo[]
 }
 
@@ -25,4 +27,7 @@ model Todo {
   done Boolean? @default(false)
   author    User?    @relation(fields: [authorId], references: [id])
   authorId  Int?
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  
 }

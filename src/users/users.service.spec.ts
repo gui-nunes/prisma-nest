@@ -16,6 +16,7 @@ describe('UsersService', () => {
     name: faker.name.findName(),
     email: faker.internet.email(),
     password: faker.internet.password(),
+    created_at: faker.date.past(),
   };
 
   const mockUserArray: CreateUserDto[] = [
@@ -24,17 +25,20 @@ describe('UsersService', () => {
       name: faker.name.findName(),
       email: faker.internet.email(),
       password: faker.internet.password(),
+      created_at: faker.date.past(),
     },
     {
       id: 1,
       name: faker.name.findName(),
       email: faker.internet.email(),
       password: faker.internet.password(),
+      created_at: faker.date.past(),
     },
   ];
 
   const mockUpdatedTodo: UpdateUserDto = {
     ...mockUser,
+    updated_at: new Date(),
   };
 
   const prismaMock = {
